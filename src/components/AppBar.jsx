@@ -3,6 +3,9 @@ import Constants from "expo-constants"
 import theme from "../theme"
 import { Link } from "react-router-native"
 import { ScrollView } from "react-native"
+import { useQuery } from "@apollo/client"
+import { GET_LOGGED_IN } from "../graphql/queries"
+import Logout from "./Logout"
 
 const styles = StyleSheet.create({
   appBar: {
@@ -13,6 +16,8 @@ const styles = StyleSheet.create({
   },
   scollBar: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    flex: 1,
     gap: 10,
   },
   heading: {
@@ -23,11 +28,15 @@ const styles = StyleSheet.create({
 })
 
 const AppBar = () => {
+  const { loading, error, data } = useQuery(GET_LOGGED_IN)
+  if (error) console.log("error", error)
+  if (loading) return null
+  const loggedIn = data.me
   return (
     <View style={styles.appBar}>
       <ScrollView contentContainerStyle={styles.scollBar} horizontal>
         <AppBarTab to="/" text="Repositories" />
-        <AppBarTab to="signin" text="Sign In" />
+        {loggedIn ? <Logout /> : <AppBarTab to="signin" text="Sign In" />}
       </ScrollView>
     </View>
   )

@@ -3,6 +3,8 @@ import Text from "./Text"
 import theme from "../theme"
 import { useFormik } from "formik"
 import * as yup from "yup"
+import useSignIn from "../hooks/useSignIn"
+import { useNavigate } from "react-router-native"
 
 const styles = {
   container: {
@@ -31,8 +33,18 @@ const styles = {
 }
 
 const SignIn = () => {
-  const onSubmit = values => {
-    console.log(values)
+  const [signIn] = useSignIn()
+  const navigate = useNavigate()
+  const onSubmit = async values => {
+    try {
+      await signIn({
+        username: values.username,
+        password: values.password,
+      })
+      navigate("/")
+    } catch (err) {
+      console.log(err)
+    }
   }
   return (
     <View style={styles.container}>
